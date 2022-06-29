@@ -1,4 +1,5 @@
 import math
+from time import sleep
 
 from machine import I2C, Pin
 
@@ -9,26 +10,25 @@ i2c.scan()
 
 dac = mcp4725.MCP4725(i2c, mcp4725.BUS_ADDRESS[0])
 
-# sine wave
-while True:
+
+def sine_wave():
     for i in range(4095, 0, -50):
         dac.write(500 + int(500 * (math.sin(2 * math.pi * i / 4095))))
 
-# square wave
-while True:
+
+def square_wave():
     dac.write(1240)
     sleep(0.5)
     dac.write(0)
     sleep(0.5)
 
-# Sawtooth wave
-start = 0
-max = 1040
-value = 0
-step = 100
-sleep_time = 0.01
 
-while True:
+def sawtooth_wave():
+    start = 0
+    max = 1040
+    value = 0
+    step = 100
+    sleep_time = 0.01
     while value < max:
         value = value + step
         dac.write(value)
@@ -37,3 +37,9 @@ while True:
         dac.write(value)
         value = value - step
         sleep(sleep_time)
+
+
+while True:
+    sine_wave()
+    square_wave()
+    sawtooth_wave()
